@@ -1,0 +1,14 @@
+# Solo la base de datos: backend y frontend se ejecutan en local
+# (mvnw spring-boot:run / ng serve).
+services:
+  mongo:
+    image: mongo:7
+    container_name: tesela-mongo-dev
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data-dev:/data/db
+      - ./mongo/init:/docker-entrypoint-initdb.d:ro
+
+volumes:
+  mongo-data-dev:

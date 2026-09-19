@@ -1,0 +1,23 @@
+# ---- Build ----
+FROM eclipse-temurin:21-jdk AS build
+WORKDIR /app
+
+# Cache de dependencias
+COPY .mvn/ .mvn/
+COPY mvnw pom.xml ./
+RUN sed -i 's/\r$//' mvnw && chmod +x mvnw && ./mvnw -q dependency:go-offline
+
+COPY src/ src/
+RUN ./mvnw -q package -DskipTests
+
+# ---- Runtime ----
+FROM eclipse-temurin:21-jre
+WORKDIR /app
+
+RUN useradd --system --no-create-home spring
+USER spring
+
+COPY --from=build /app/target/*.jar app.jar
+
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "app.jar"]

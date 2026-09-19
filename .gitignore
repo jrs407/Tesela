@@ -1,0 +1,15 @@
+# Node / Angular
+node_modules/
+.angular/
+dist/
+
+# Java / Maven
+target/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# Entorno
+.env
