@@ -1,0 +1,46 @@
+<form [formGroup]="form" (ngSubmit)="enviar()" novalidate>
+  <header>
+    <h1>Tesela</h1>
+    <p>Accede con tu cuenta</p>
+  </header>
+
+  <div class="campo">
+    <label for="correo">Correo</label>
+    <input
+      id="correo"
+      type="email"
+      formControlName="correo"
+      autocomplete="email"
+      [class.invalido]="form.controls.correo.touched && form.controls.correo.invalid"
+    />
+    @if (form.controls.correo.touched && form.controls.correo.errors; as errores) {
+      <small class="campo-error">
+        @if (errores['required']) { El correo es obligatorio } @else { El correo no es válido }
+      </small>
+    }
+  </div>
+
+  <div class="campo">
+    <label for="contrasenia">Contraseña</label>
+    <input
+      id="contrasenia"
+      type="password"
+      formControlName="contrasenia"
+      autocomplete="current-password"
+      [class.invalido]="form.controls.contrasenia.touched && form.controls.contrasenia.invalid"
+    />
+    @if (form.controls.contrasenia.touched && form.controls.contrasenia.errors) {
+      <small class="campo-error">La contraseña es obligatoria</small>
+    }
+  </div>
+
+  @if (error(); as mensaje) {
+    <p class="alerta" role="alert">{{ mensaje }}</p>
+  }
+
+  <button type="submit" [disabled]="cargando()">
+    {{ cargando() ? 'Entrando...' : 'Entrar' }}
+  </button>
+
+  <p class="ayuda">Prueba: ana&#64;mail.com / 1234</p>
+</form>

@@ -4,6 +4,10 @@
       <a [routerLink]="tab.path" routerLinkActive="active">{{ tab.label }}</a>
     }
   </nav>
+  <div class="sesion">
+    <span>{{ usuario()?.nombre }}</span>
+    <button type="button" (click)="salir()">Salir</button>
+  </div>
 </header>
 
 <main>

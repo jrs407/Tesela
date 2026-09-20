@@ -1,5 +1,9 @@
-# Solo la base de datos: backend y frontend se ejecutan en local
-# (mvnw spring-boot:run / ng serve).
+# Entorno de DESARROLLO con recarga automatica (Compose Watch):
+#   docker compose -f docker-compose.dev.yml up --build --watch
+# Al guardar un archivo de frontend/ o backend/ se sincroniza con el contenedor y se recarga solo.
+#
+# Solo la base de datos (backend y frontend en local con mvnw spring-boot:run / ng serve):
+#   docker compose -f docker-compose.dev.yml up -d mongo
 # Desde fuera de Docker, conecta con directConnection=true (el replica set se anuncia como "mongo:27017"):
 #   SPRING_MONGODB_URI=mongodb://localhost:27017/tesela?directConnection=true
 services:
@@ -25,6 +29,60 @@ services:
       timeout: 10s
       retries: 20
       start_period: 10s
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    container_name: tesela-backend-dev
+    depends_on:
+      mongo:
+        condition: service_healthy
+    environment:
+      SPRING_MONGODB_URI: mongodb://mongo:27017/${MONGO_DATABASE:-tesela}?replicaSet=${MONGO_REPLICA_SET:-rs0}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:4200}
+    ports:
+      - "${BACKEND_PORT:-8080}:8080"
+    develop:
+      watch:
+        # Copia el codigo y compila; DevTools reinicia la app al ver clases nuevas.
+        - action: sync+exec
+          path: ./backend/src
+          target: /app/src
+          exec:
+            command: ./mvnw -q compile
+        # Cambiar dependencias exige reconstruir la imagen.
+        - action: rebuild
+          path: ./backend/pom.xml
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    container_name: tesela-frontend-dev
+    environment:
+      # Angular SSR rechaza cualquier Host no permitido (proteccion SSRF); en dev aceptamos localhost.
+      NG_ALLOWED_HOSTS: localhost
+    ports:
+      - "${FRONTEND_PORT:-4200}:4200"
+    develop:
+      watch:
+        # ng serve (dentro del contenedor) detecta los archivos copiados y recarga el navegador.
+        - action: sync
+          path: ./frontend/src
+          target: /app/src
+        - action: sync
+          path: ./frontend/public
+          target: /app/public
+        # La configuracion solo se lee al arrancar ng serve.
+        - action: sync+restart
+          path: ./frontend/angular.json
+          target: /app/angular.json
+        - action: sync+restart
+          path: ./frontend/tsconfig.json
+          target: /app/tsconfig.json
+        - action: rebuild
+          path: ./frontend/package.json
 
 volumes:
   mongo-data-dev:

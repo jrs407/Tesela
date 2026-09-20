@@ -1,0 +1,14 @@
+# Imagen de DESARROLLO: spring-boot:run + DevTools. Los cambios llegan via `docker compose watch`,
+# que copia src/ y ejecuta `mvnw compile`; DevTools detecta las clases nuevas y reinicia la app.
+FROM eclipse-temurin:21-jdk
+WORKDIR /app
+
+# Cache de dependencias
+COPY .mvn/ .mvn/
+COPY mvnw pom.xml ./
+RUN sed -i 's/\r$//' mvnw && chmod +x mvnw && ./mvnw -q dependency:go-offline
+
+COPY src/ src/
+
+EXPOSE 8080
+CMD ["./mvnw", "spring-boot:run"]

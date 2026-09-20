@@ -1,1 +1,53 @@
-/* You can add global styles to this file, and also import other style files */
+/* Estilos globales: paleta (terracota + neutros; pizarra en oscuro), modo claro/oscuro y reset basico. */
+:root {
+  color-scheme: light dark;
+
+  --color-fondo: #f6f4f1;
+  --color-superficie: #ffffff;
+  --color-texto: #211d1a;
+  --color-texto-suave: #736b64;
+  --color-borde: #d9d4ce;
+  --color-primario: #b5482f;
+  --color-primario-hover: #963a24;
+  --color-sobre-primario: #ffffff;
+  --color-error: #b42318;
+  --color-error-fondo: #fef3f2;
+  --color-error-borde: #fda29b;
+  --radio: 6px;
+}
+
+/* Modo oscuro segun la preferencia del sistema. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-fondo: #191d27;
+    --color-superficie: #222835;
+    --color-texto: #eceef3;
+    --color-texto-suave: #9aa3b5;
+    --color-borde: #343c4d;
+    --color-primario: #ee8a6e;
+    --color-primario-hover: #f4a58f;
+    --color-sobre-primario: #1a1410;
+    --color-error: #f97066;
+    --color-error-fondo: #3a1f24;
+    --color-error-borde: #7a3038;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-size: 14px;
+  line-height: 1.4;
+  background: var(--color-fondo);
+  color: var(--color-texto);
+}
+
+a {
+  color: var(--color-primario);
+}

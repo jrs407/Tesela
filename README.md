@@ -66,9 +66,17 @@ docker compose up -d --build
 
 ## Desarrollo local
 
+Todo en Docker con recarga automática al guardar (frontend con `ng serve`, backend con DevTools):
+
+```bash
+docker compose -f docker-compose.dev.yml up --build --watch
+```
+
+Sin Docker para backend y frontend:
+
 ```bash
 # Solo la base de datos
-docker compose -f docker-compose.dev.yml up -d
+docker compose -f docker-compose.dev.yml up -d mongo
 
 # Backend
 cd backend && ./mvnw spring-boot:run
