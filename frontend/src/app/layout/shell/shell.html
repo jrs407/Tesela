@@ -1,0 +1,11 @@
+<header>
+  <nav aria-label="Principal">
+    @for (tab of tabs; track tab.path) {
+      <a [routerLink]="tab.path" routerLinkActive="active">{{ tab.label }}</a>
+    }
+  </nav>
+</header>
+
+<main>
+  <router-outlet />
+</main>

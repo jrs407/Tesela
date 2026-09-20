@@ -20,6 +20,37 @@ Tesela/
 └── docker-compose.dev.yml
 ```
 
+
+### Backend (monolito modular)
+
+```
+com.tesela
+├── config/          # Configuración global (CORS, ...)
+├── common/          # Código transversal (excepciones, utilidades)
+└── modules/
+    └── <modulo>/    # Un paquete por módulo de negocio
+        ├── api/            # Controllers REST + DTOs
+        ├── application/    # Casos de uso (API pública del módulo)
+        ├── domain/         # Modelo y reglas de negocio
+        └── infrastructure/ # Repositorios MongoDB, integraciones
+```
+
+Reglas: `api → application → domain`; `infrastructure` implementa puertos del dominio; un módulo solo usa
+la capa `application` de otro, nunca su `domain` ni `infrastructure`. `modules/example` es la plantilla a copiar.
+
+### Frontend (una feature por pestaña)
+
+```
+src/app/
+├── core/       # Singletons: interceptors, guards, servicios globales
+├── shared/     # Componentes, pipes y modelos reutilizables
+├── layout/     # Shell (navegación por pestañas)
+└── features/
+    └── <feature>/   # Una pestaña = una feature con rutas lazy (<feature>.routes.ts)
+```
+
+Para añadir una pestaña: crear `features/<nombre>/`, registrar su ruta lazy en `app.routes.ts` y añadirla a `tabs` en el shell.
+
 ## Arranque con Docker
 
 ```bash
